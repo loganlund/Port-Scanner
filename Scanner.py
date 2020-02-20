@@ -20,16 +20,29 @@ def getUserInput():
 
     #user specifies port to scan
     port = int(input('Specify a port to scan: '))
-    scanSinglePort(hostIP, port)
+    scanSingleTCPPort(hostIP, port)
 
 
-def scanSinglePort(hostIP, port):
+def scanSingleTCPPort(hostIP, port):
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     sock.settimeout(3)
     print('------------------------')
     if sock.connect_ex((hostIP, port)):
-        print('port ' + str(port) + ' is closed')
-        return('port ' + str(port) + ' is closed')
+        print('TCP port ' + str(port) + ' is closed')
+        return('TCP port ' + str(port) + ' is closed')
+        
+    else:
+        print('TCP port ' + str(port) + ' is open!!!!!!!!!!!!')
+        return('TCP port ' + str(port) + ' is open!!!!!!!!!!!!')
+    print('------------------------')
+    
+def scanSingleUDPPort(hostIP, port):
+    sock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    sock.settimeout(3)
+    print('------------------------')
+    if sock.connect_ex((hostIP, port)):
+        print('UDP port ' + str(port) + ' is closed')
+        return('UDP port ' + str(port) + ' is closed')
         
     else:
         print('port ' + str(port) + ' is open!!!!!!!!!!!!')
@@ -47,11 +60,21 @@ def TCPscanPorts(host):
     portList = createArray(minPort, maxPort)
     responseList = []
     for port in portList:   
-        response = scanSinglePort(host, port)
+        response = scanSingleTCPPort(host, port)
         responseList.append(response)
     return responseList
 
 
+def UDPScanPorts(host):
+    minPort = int(input('Please specify a beginning port for a range that you would like to scan on ' + host + ': '))
+    maxPort = int(input('Please specify the last port in the range that you would like to scan on ' + host + ': '))
+    
+    portList = createArray(minPort, maxPort)
+    responseList = []
+    for port in portList:   
+        response = scanSingleUDPPort(host, port)
+        responseList.append(response)
+    return responseList
 
 def createArray(minPort, maxPort):
     portList = []
@@ -87,7 +110,10 @@ def ScanHosts(hostList):
         resultsList.append('IP Address: ' + hostIP)
         resultsList.append('\n')
         results = TCPscanPorts(hostIP) #pass in host instead if you want to use IP Addresses instead of hostnames
+        results2 = UDPScanPorts(hostIP)
         for i in results:
+            resultsList.append(i)
+        for i in results2:
             resultsList.append(i)
     print (resultsList)
     #create PDF file
