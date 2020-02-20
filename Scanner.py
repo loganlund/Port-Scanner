@@ -45,8 +45,8 @@ def scanSingleUDPPort(hostIP, port):
         return('UDP port ' + str(port) + ' is closed')
         
     else:
-        print('port ' + str(port) + ' is open!!!!!!!!!!!!')
-        return('port ' + str(port) + ' is open!!!!!!!!!!!!')
+        print('UDP port ' + str(port) + ' is open!!!!!!!!!!!!')
+        return('UDP port ' + str(port) + ' is open!!!!!!!!!!!!')
     print('------------------------')
     
 
@@ -105,6 +105,7 @@ def createArray(minPort, maxPort):
 def ScanHosts(hostList):
     resultsList = []
     for host in hostList:
+        resultsList.append('\n')
         resultsList.append(host + '\n')
         hostIP = socket.gethostbyname(host) #Comment this line out if hosts.txt contains IP Addresses instead of domain names, and pass host to TCPScanPorts instead of hostIP
         resultsList.append('IP Address: ' + hostIP)
