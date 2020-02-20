@@ -24,26 +24,25 @@ def getUserInput():
 
 
 def scanSinglePort(hostIP, port):
-    listOfPorts = []
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-    sock.settimeout(5)
+    sock.settimeout(3)
     print('------------------------')
     if sock.connect_ex((hostIP, port)):
         print('port ' + str(port) + ' is closed')
-        listOfPorts.append('port ' + str(port) + ' is closed')
+        return('port ' + str(port) + ' is closed')
         
     else:
         print('port ' + str(port) + ' is open!!!!!!!!!!!!')
-        listOfPorts.append('port ' + str(port) + ' is open!!!!!!!!!!!!')
+        return('port ' + str(port) + ' is open!!!!!!!!!!!!')
     print('------------------------')
-    return listOfPorts
+    
 
 
 
 def TCPscanPorts(host):   
     #define port range
-    minPort = int(input('Please specify a beginning port for a range that you would like to scan: '))
-    maxPort = int(input('Please specify the last port in the range that you would like to scan: '))
+    minPort = int(input('Please specify a beginning port for a range that you would like to scan on ' + host + ': '))
+    maxPort = int(input('Please specify the last port in the range that you would like to scan on ' + host + ': '))
     
     portList = createArray(minPort, maxPort)
     responseList = []
@@ -53,22 +52,10 @@ def TCPscanPorts(host):
     return responseList
 
 
-        # sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        # sock.settimeout(5)
-        # print('------------------------')
-        # print('scanning port ' + str(port) + ' on host ' + host + " IP Address: " + socket.gethostbyname(host))
-        # if sock.connect_ex((host, port)):
-        #     print('port ' + str(port) + ' is closed')
-        # else:
-        #     print('port ' + str(port) + ' is open!!!!!!!!!!!!!!')
-        # print('------------------------')
-
-
-
 
 def createArray(minPort, maxPort):
     portList = []
-    for i in range(minPort, maxPort):
+    for i in range(minPort, (maxPort+1)):
         portList.append(i)
     print(portList)
     return portList
@@ -96,20 +83,21 @@ def ScanHosts(hostList):
     resultsList = []
     for host in hostList:
         resultsList.append(host + '\n')
-        hostIP = socket.gethostbyname(host)
+        hostIP = socket.gethostbyname(host) #Comment this line out if hosts.txt contains IP Addresses instead of domain names, and pass host to TCPScanPorts instead of hostIP
         resultsList.append('IP Address: ' + hostIP)
-        results = TCPscanPorts(hostIP)
-        resultsList.append(results)
-    
+        resultsList.append('\n')
+        results = TCPscanPorts(hostIP) #pass in host instead if you want to use IP Addresses instead of hostnames
+        for i in results:
+            resultsList.append(i)
+    print (resultsList)
     #create PDF file
     pdf = FPDF()
     pdf.add_page()
     pdf.set_font("Arial", size = 14) 
-
-    for i in resultsList:
-        pdf.cell(200,10,txt = i)
-    
-    pdf.output('results.pdf')
+    for i in range(0, len(resultsList)):
+        pdf.cell(200,10,txt = str(resultsList[i]), ln=i, align = "C")
+    print(pdf.output)
+    pdf.output("results.pdf")
 
         
 def getHostList():
